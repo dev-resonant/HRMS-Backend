@@ -55,3 +55,21 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local development configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# User secrets
+secrets.json
+
+# OS files
+.DS_Store
+Thumbs.db
