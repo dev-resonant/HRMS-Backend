@@ -1,0 +1,27 @@
+# Git
+.git/
+.gitignore
+
+# Visual Studio
+.vs/
+.vscode/
+
+# Build output
+**/bin/
+**/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+
+# Logs
+*.log
+
+# Docker
+Dockerfile
+.dockerignore

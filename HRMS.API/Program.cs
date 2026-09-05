@@ -10,13 +10,14 @@ using System.Text;
 using MediatR;
 using HRMS.Application.Features.Auth.Commands.Login;
 using Microsoft.OpenApi;
+using HRMS.Infrastructure.Persistence.SeedData;
 
 
 namespace HRMS.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +85,17 @@ namespace HRMS.API
             });
 
             var app = builder.Build();
+
+            if(app.Environment.IsDevelopment())
+            {
+                using var scope = app.Services.CreateScope();
+
+                var dbContext = scope.ServiceProvider.GetRequiredService<HrmsDbContext>();
+
+                var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+
+                await DevelopmentDbSeeder.SeedAsync(dbContext, passwordHasher, builder.Configuration);
+            }
 
             if(app.Environment.IsDevelopment())
             {
