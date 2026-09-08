@@ -97,6 +97,17 @@ namespace HRMS.API
                 await DevelopmentDbSeeder.SeedAsync(dbContext, passwordHasher, builder.Configuration);
             }
 
+            if(app.Environment.IsProduction())
+            {
+                using var scope = app.Services.CreateScope();
+
+                var dbContext = scope.ServiceProvider.GetRequiredService<HrmsDbContext>();
+
+                var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+
+                await ProductionDbSeeder.SeedAsync(dbContext,passwordHasher, builder.Configuration);
+            }
+
             if(app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
