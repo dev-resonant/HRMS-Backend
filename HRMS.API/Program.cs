@@ -123,7 +123,7 @@ namespace HRMS.API
             //    app.MapOpenApi();
             //}
 
-            app.UseHttpsRedirection();
+            
 
             
 
