@@ -108,11 +108,8 @@ namespace HRMS.API
                 await ProductionDbSeeder.SeedAsync(dbContext,passwordHasher, builder.Configuration);
             }
 
-            if(app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
 
             // we are going to remove OpenAPI and instead we are going to use Swashbuckle and configure swagger.
