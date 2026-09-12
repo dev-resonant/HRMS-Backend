@@ -25,6 +25,14 @@ namespace HRMS.API
 
             builder.Services.AddControllers();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("Frontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen( options =>
             {
@@ -115,14 +123,14 @@ namespace HRMS.API
             // we are going to remove OpenAPI and instead we are going to use Swashbuckle and configure swagger.
 
             // Configure the HTTP request pipeline.
-           // if (app.Environment.IsDevelopment())
+            // if (app.Environment.IsDevelopment())
             //{
             //    app.MapOpenApi();
             //}
 
-            
 
-            
+
+            app.UseCors("Frontend");
 
             app.UseAuthentication();
 
