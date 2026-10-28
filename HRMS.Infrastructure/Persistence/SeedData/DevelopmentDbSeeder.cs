@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
 using HRMS.Application.Interfaces;
+using HRMS.Domain.Authorization;
+using HRMS.Domain.Common;
+using HRMS.Infrastructure.Authorization;
 using HRMS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,19 +14,24 @@ namespace HRMS.Infrastructure.Persistence.SeedData
 {
    public static class DevelopmentDbSeeder
     {
+        public const string DevDomain = "localhost";
+        public const string DevAdminEmail = "admin@localhost";
+
         public static async Task SeedAsync(HrmsDbContext dbContext,IPasswordHasher passwordHasher,IConfiguration configuration)
         {
             await dbContext.Database.MigrateAsync();
 
             // Create development company if it does not exist
-            var company = await dbContext.Companies.FirstOrDefaultAsync(c => c.Domain == "localhost");
+            var domain = DomainNormalizer.Normalize(DevDomain);
+
+            var company = await dbContext.Companies.FirstOrDefaultAsync(c => c.Domain.ToLower() == domain);
 
             if (company == null)
             {
                 company = new Company
                 {
                     Name = "HRMS Development",
-                    Domain = "localhost",
+                    Domain = domain,
                     LogoUrl = string.Empty,
                     Timezone = "Asia/Kolkata",
                     IsActive = true,
@@ -33,28 +41,15 @@ namespace HRMS.Infrastructure.Persistence.SeedData
                 await dbContext.SaveChangesAsync();
             }
 
-            // 2. Create Admin role if it does not exist
+            // 2. The development administrator is an HR Admin (system role, shared by all companies)
 
-            var role = await dbContext.Roles.FirstOrDefaultAsync(r => r.CompanyId == company.Id && r.Name == "Admin");
-
-            if (role == null)
-            {
-                role = new Role
-                {
-                    CompanyId = company.Id,
-                    Name = "Admin",
-                    DisplayName = "Administrator",
-                    Permissions = "{ }",
-                    IsSystem = true
-                };
-
-                dbContext.Roles.Add(role);
-                await dbContext.SaveChangesAsync();
-            }
+            var role = await SystemRoleSeeder.EnsureAsync(dbContext, SystemRoleKeys.HrAdmin);
 
             // 3. Create Development admin user if it does not exist
 
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.CompanyId == company.Id && u.Email == "admin@localhost");
+            var adminEmail = EmailNormalizer.Normalize(DevAdminEmail);
+
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.CompanyId == company.Id && u.Email == adminEmail);
 
             if (user == null)
             {
@@ -70,7 +65,7 @@ namespace HRMS.Infrastructure.Persistence.SeedData
                     CompanyId = company.Id,
                     RoleId = role.Id,
                     Name = "Development Administrator",
-                    Email = "admin@localhost",
+                    Email = adminEmail,
                     PasswordHash = passwordHasher.Hash(password),
                     IsActive = true,
                     LastLogin = null

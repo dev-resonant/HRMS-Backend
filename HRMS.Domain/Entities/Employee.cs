@@ -8,6 +8,13 @@ namespace HRMS.Domain.Entities
 {
     public class Employee : BaseEntity
     {
+        /// <summary>
+        /// Optimistic-concurrency token (PostgreSQL's built-in <c>xmin</c> system column, so there is no extra column to store).
+        /// An UPDATE is only applied if the row is unchanged since it was read; otherwise the save fails and nothing is overwritten.
+        /// Never exposed by the API and never set by code.
+        /// </summary>
+        public uint Version { get; set; }
+
         public Guid UserId { get; set; }
 
         public Guid CompanyId { get; set; }
@@ -19,6 +26,19 @@ namespace HRMS.Domain.Entities
         public string EmpCode { get; set; } = string.Empty;
 
         public string Designation { get; set; } = string.Empty;
+
+        /// <summary>Private email address of the person (onboarding form, specification 5.1 step 1). Optional; not the login name.</summary>
+        public string? PersonalEmail { get; set; }
+
+        /// <summary>Contact phone number (onboarding form). Optional.</summary>
+        public string? Phone { get; set; }
+
+        /// <summary>full-time / part-time / contract (onboarding form). Optional; independent of <see cref="Status"/>.</summary>
+        public EmploymentType? EmploymentType { get; set; }
+
+        public DateOnly JoiningDate { get; set; }
+
+        public DateOnly? LastWorkingDate { get; set; }
 
         public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 

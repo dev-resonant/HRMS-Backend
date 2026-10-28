@@ -11,6 +11,8 @@ namespace HRMS.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Department> builder)
         {
+            builder.Property(d => d.Name).IsRequired().HasMaxLength(100);
+
             //Company -> Departments
             builder.HasOne(d => d.Company).WithMany(c => c.Departments).HasForeignKey(d => d.CompanyId).OnDelete(DeleteBehavior.Cascade);
 

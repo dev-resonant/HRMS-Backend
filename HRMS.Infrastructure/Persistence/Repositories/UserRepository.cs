@@ -22,11 +22,16 @@ namespace HRMS.Infrastructure.Persistence.Repositories
             return await _dbContext.Users.AsNoTracking().Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email && u.CompanyId == companyId, cancellationToken);
         }
 
-        public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
+        public async Task<User?> GetByIdAsync(Guid userId, Guid companyId,CancellationToken cancellationToken = default)
         {
-            _dbContext.Users.Update(user);
+            return await _dbContext.Users.AsNoTracking().Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId, cancellationToken);
+        }
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+        public async Task UpdateLastLoginAsync(Guid userId, Guid companyId, DateTime utcNow, CancellationToken cancellationToken = default)
+        {
+            await _dbContext.Users
+                .Where(u => u.Id == userId && u.CompanyId == companyId)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(u => u.LastLogin, utcNow), cancellationToken);
         }
 
     }

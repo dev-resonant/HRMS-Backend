@@ -10,5 +10,6 @@ namespace HRMS.Domain.Enums
         Inactive = 2,
         Probation = 3,
         NoticePeriod = 4,
+        Contract = 5,
     }
 }

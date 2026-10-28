@@ -14,11 +14,22 @@ namespace HRMS.Domain.Entities
 
         public string Name { get; set; } = string.Empty;
 
-        public string Email { get; set; } = string.Empty;
+        private string _email = string.Empty;
+
+        // Always stored trimmed and lowercase (EmailNormalizer), so no code path can create "Admin@x" next to "admin@x".
+        // EF Core reads and writes the backing field, so values loaded from the database are not re-normalized.
+        public string Email
+        {
+            get => _email;
+            set => _email = EmailNormalizer.Normalize(value);
+        }
 
         public string PasswordHash { get; set; } = string.Empty;
 
         public bool IsActive { get; set; } = true;
+
+        // TRUE forces a password reset on next login. Employee onboarding sets this to true.
+        public bool IsFirstLogin { get; set; }
 
         public DateTime? LastLogin { get; set; }
 

@@ -4,4 +4,5 @@
   <Project Path="HRMS.Domain/HRMS.Domain.csproj" />
   <Project Path="HRMS.Infrastructure/HRMS.Infrastructure.csproj" />
   <Project Path="HRMS.Shared/HRMS.Shared.csproj" />
+  <Project Path="HRMS.Tests/HRMS.Tests.csproj" />
 </Solution>
